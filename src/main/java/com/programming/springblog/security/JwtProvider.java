@@ -5,15 +5,19 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.security.*;
 import java.security.cert.CertificateException;
 
@@ -22,14 +26,17 @@ public class JwtProvider {
 
     private KeyStore keyStore;
 
+    @Autowired
+    private ResourceLoader resourceLoader;
+
     @PostConstruct
     public void init(){
         try {
 
             keyStore = KeyStore.getInstance("JKS");
-            Resource resource = new ClassPathResource("springblog.jks");
+
+            Resource resource = new ClassPathResource("/springblog.jks", getClass());
             InputStream resourceAsStream = resource.getInputStream();
-//            InputStream resourceAsStream = getClass().getResourceAsStream("/springblog.jks");
             keyStore.load(resourceAsStream, "secret".toCharArray());
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e){
             throw new SpringBlogException("Exception occured while loading keystore");
