@@ -26,9 +26,6 @@ public class JwtProvider {
 
     private KeyStore keyStore;
 
-    @Autowired
-    private ResourceLoader resourceLoader;
-
     @PostConstruct
     public void init(){
         try {
